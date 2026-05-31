@@ -2,9 +2,21 @@
 
 # TSMP Codec RGB20
 
-TSMP의 RGB20 코덱 패키지입니다.
+RGB20은 RGB 채널을 더 촘촘하게 사용해 TSMP payload 밀도를 높이는 고밀도 코덱입니다. 화면 경로가 색을 안정적으로 보존할 때 더 많은 데이터를 한 프레임에 담기 위한 선택지입니다.
 
-이 패키지는 TSMP Core와 함께 사용되며, `TSMPSetup`의 Codec 탭에서 자동으로 발견되는 RGB20 codec handler, decode shader, material, prefab, catalog asset을 제공합니다.
+## 특징
+
+- RGB 기반 20-bit TSMP 심볼
+- RGB16보다 더 높은 payload 밀도
+- 색상 보존 품질이 좋은 송출/수신 경로에 적합
+- 더 큰 상태 패킷이나 더 많은 네트워크 컴포넌트를 사용하는 TSMP 구성에 유용
+- `TSMPSetup` Codec 탭에서 자동 검색
+
+## 요구 사항
+
+- TSMP Core: https://github.com/kibalab/TSMP-Core
+- `com.kibalab.tsmp.core` 0.0.1 이상
+- VRChat Worlds SDK 3.9.0 이상
 
 ## 설치
 
@@ -14,32 +26,19 @@ VRChat Creator Companion에서 VPM 저장소를 추가합니다.
 https://vpm.kiba.red/
 ```
 
-그 다음 `TSMP Codec RGB20` 패키지를 설치합니다.
-
-## 요구 사항
-
-- `com.kibalab.tsmp.core` 0.0.1 이상
-- VRChat Worlds SDK 3.9.0 이상
+그 다음 `TSMP Core`와 `TSMP Codec RGB20`을 설치합니다.
 
 ## 사용 방법
 
-1. 씬에 TSMP Core의 `TSMPController.prefab` 또는 동등한 TSMP 구성요소를 배치합니다.
-2. `TSMPSetup`의 Codec 탭을 엽니다.
-3. `Refresh Codecs`를 누릅니다.
-4. `RGB20`이 목록에 표시되는지 확인하고 선택합니다.
-5. `Apply Setup`을 실행합니다.
+1. Core 패키지의 `Packages/com.kibalab.tsmp.core/Samples/TSMPController.prefab`을 씬에 배치합니다.
+2. `TSMPSetup`의 Codec 탭에서 `Refresh Codecs`를 누릅니다.
+3. `RGB20`을 선택합니다.
+4. `Apply Setup`을 실행합니다.
 
-RGB20은 payload 용량을 많이 요구하는 TSMP 스트림을 위한 고밀도 코덱입니다. 디코드 비용이 더 높아도 프레임 안에 더 많은 데이터를 담아야 할 때 사용합니다.
+## 배포 상태
 
-## 배포
+현재 beta 단계이며 패키지 버전과 Git 태그는 `v0.0.x-beta.x` 형식을 사용합니다.
 
-이 저장소는 태그를 푸시하면 GitHub Actions가 release artifact와 VPM 등록을 수행하도록 구성되어 있습니다.
+## 라이선스
 
-태그 이름은 `package.json`의 `version`과 같아야 합니다.
-
-예:
-
-```bash
-git tag v1.0.0
-git push origin v1.0.0
-```
+MIT License. Copyright (c) 2026 KIBA_Labs.

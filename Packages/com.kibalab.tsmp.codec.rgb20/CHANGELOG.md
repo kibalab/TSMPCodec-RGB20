@@ -1,5 +1,6 @@
 # Changelog
 
-## 1.0.0
+## 0.0.3-beta.1
 
-- Initial public package release.
+- Beta release metadata for VPM distribution.
+- Includes RGB20 codec runtime, shaders, materials, prefab, and sample.
