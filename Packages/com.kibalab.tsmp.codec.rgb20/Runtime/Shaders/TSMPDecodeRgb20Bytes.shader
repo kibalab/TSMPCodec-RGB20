@@ -84,31 +84,38 @@ Shader "Hidden/TSMP/Decode RGB20 Bytes"
                 return r | (g << 7) | (b << 14);
             }
 
-            int DecodeByte(int byteIndex)
+            float4 frag(v2f i) : SV_Target
             {
-                if (byteIndex < 0 || byteIndex >= (int)_ByteCount)
-                    return 0;
+                float2 pixel = floor(i.uv * float2(_OutputWidth, _OutputHeight));
+                pixel = clamp(pixel, 0.0, float2(_OutputWidth - 1.0, _OutputHeight - 1.0));
+                int baseByte = ((int)pixel.y * (int)_OutputWidth + (int)pixel.x) * 4;
+                if (baseByte >= (int)_ByteCount)
+                    return 0.0;
 
-                int bitIndex = byteIndex * 8;
-                int symbolIndex = FloorDivNonNegative(bitIndex, 20.0);
-                int bitShift = bitIndex - symbolIndex * 20;
-                int symbol = DecodeRgb20Symbol(symbolIndex);
-                int value = (symbol >> bitShift) & 0xFF;
-
-                if (bitShift > 12)
+                int totalBits = 20;
+                int bitIndex = baseByte * 8;
+                int symbolIndex = FloorDivNonNegative(bitIndex, (float)totalBits);
+                int bitShift = bitIndex - symbolIndex * totalBits;
+                int requiredBits = min(4, (int)_ByteCount - baseByte) * 8;
+                uint packed = (uint)DecodeRgb20Symbol(symbolIndex) >> bitShift;
+                int nextBit = totalBits - bitShift;
+                if (nextBit < requiredBits)
                 {
-                    int nextSymbol = DecodeRgb20Symbol(symbolIndex + 1);
-                    int remaining = 20 - bitShift;
-                    int mask = (1 << remaining) - 1;
-                    int low = (symbol >> bitShift) & mask;
-                    int high = nextSymbol & ((1 << (8 - remaining)) - 1);
-                    value = low | (high << remaining);
+                    packed |= (uint)DecodeRgb20Symbol(symbolIndex + 1) << nextBit;
+                    nextBit += totalBits;
+                }
+                if (nextBit < requiredBits)
+                {
+                    packed |= (uint)DecodeRgb20Symbol(symbolIndex + 2) << nextBit;
+                    nextBit += totalBits;
                 }
 
-                return value;
-            }
+                if (requiredBits < 32)
+                    packed &= (1u << requiredBits) - 1u;
 
-            #include "Packages/com.kibalab.tsmp.core/Runtime/Codecs/Common/Shaders/cgincs/TSMPDecodeByteOutput.cginc"
+                return float4(packed & 0xFFu, (packed >> 8) & 0xFFu,
+                    (packed >> 16) & 0xFFu, (packed >> 24) & 0xFFu) / 255.0;
+            }
             ENDCG
         }
     }
