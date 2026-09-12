@@ -1,6 +1,8 @@
-# RGB20 0.0.3-beta.2 Validation
+# RGB20 SDK-Optional Validation
 
 Date: 2026-09-12. Unity 2022.3.22f1, Core 0.2.0, Luma4 0.0.3, Worlds SDK 3.10.4-beta.2 with bundled UdonSharp, RTX 4090 / Direct3D11.
+
+The tested implementation is unchanged in 0.0.3-beta.3. Release artifact review found a validation-project-specific program-cache GUID in beta.2, which beta.3 restores to the original reference. Unlike RGB16, RGB20 has no bundled compiled program cache; UdonSharp generates it in the consuming project.
 
 Evidence directory: F:/Unity/TSMP/Validation-Results/s07.
 

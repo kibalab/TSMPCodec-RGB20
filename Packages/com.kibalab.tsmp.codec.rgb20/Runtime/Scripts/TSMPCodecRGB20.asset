@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: TSMPCodecRGB20
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 40a8dcec0342923458772399413f0225, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: e915abe4ff540224dbd423ce783040d3,
+    type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 9e8e3247409d452cb97f404282ff1ac0, type: 3}
