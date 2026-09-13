@@ -52,6 +52,7 @@ MonoBehaviour:
   decodeStage: 0
   payloadInterleaved: 0
   selectedDecodeMaterial: {fileID: 0}
+  calibrationMaterial: {fileID: 2100000, guid: 4a5b20c7b08447bcbe014df35efa8994, type: 2}
   payloadStartRow: 5
   payloadBlockCount: 0
   byteCount: 0
