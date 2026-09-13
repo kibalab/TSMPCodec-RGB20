@@ -12,7 +12,9 @@ The test requires a graphics device and uses D3D11, not `-nographics`. `SymbolBa
 
 The fixture uses the native 7/7/6 writer at 1280 x 720 with 8-pixel blocks, a linear source, and a linear 4096 x 1 RGBA8 output. It compares the complete output against the baseline for sample sizes 1/4/8, exact raster, deterministic channel distortion/noise, flat calibration/tie input, and byte counts 0/1/2/3/4/5/7/16/31/56/257/1027. Exact input must also round-trip to its payload, and bytes after the requested count must remain zero.
 
-Timings wrap one blit in each command-buffer GPU marker, alternate baseline/candidate order, warm up for 20 frames, and collect 45 frames with one GPU sample block per marker. Readbacks are outside the timed region.
+Timings wrap 32 blits in each uniquely named GPU marker and wait for GPU completion between baseline and candidate batches. The runner alternates order, warms up for 10 frames, and collects 15 frames. Medians are divided by 32; readbacks are outside the GPU markers. The additional wall-clock values include amortized submission, completion and readback costs.
+
+This replaces the initial single-draw timing method, which sometimes returned zero or misattributed adjacent work. Only completion-separated batch measurements are reported below.
 
 ### Verified Result
 
@@ -20,11 +22,11 @@ Unity 2022.3.22f1, NVIDIA GeForce RTX 4090, Direct3D11: all 108 output cases pas
 
 | Payload bytes | Sample size | Before (us) | After (us) |
 | ---: | ---: | ---: | ---: |
-| 4 | 1 | 149.504 | 124.928 |
-| 56 | 1 | 275.456 | 188.416 |
-| 1027 | 1 | 276.480 | 189.440 |
-| 4 | 4 | 1324.032 | 899.072 |
-| 56 | 4 | 2214.912 | 1388.544 |
-| 1027 | 4 | 2242.560 | 1405.952 |
+| 4 | 1 | 26.976 | 10.432 |
+| 56 | 1 | 44.544 | 17.120 |
+| 1027 | 1 | 45.408 | 17.464 |
+| 4 | 4 | 398.136 | 167.672 |
+| 56 | 4 | 639.904 | 252.992 |
+| 1027 | 4 | 665.856 | 254.848 |
 
 The shader now decodes at most three symbols per output pixel and packs them into one 32-bit value. Channel classification and calibration are unchanged. These are GPU microbenchmarks, not whole-frame CPU or VRChat timings. GPU clocks were not locked and another editor was open; gains on other GPUs/APIs or actual compressed streams remain unmeasured.
