@@ -14,6 +14,10 @@ namespace K13A.TSMP
 
         public Material byteDecodeMaterial;
         public Material[] debugMaterials;
+        [Tooltip("Use four bilinear reads for native-resolution 4x4 receive samples. Other footprints keep the standard sampler.")]
+        public bool useBilinear4;
+        [Tooltip("Prepare a calibration LUT even for single-sample decoding in modes that support it.")]
+        public bool preferCalibrationLut;
 
 #if !COMPILER_UDONSHARP
         public override int SymbolMode => SymbolModeRgb20;
@@ -109,8 +113,11 @@ namespace K13A.TSMP
         public override void PrepareDecode(Texture source, Material material)
         {
             base.PrepareDecode(source, material);
-            // 단일 샘플에서는 LUT 준비 비용이 이득보다 커서 기존 디코드 경로를 유지한다.
-            if (material == null || GetDecodeSampleSize(material) <= 1)
+            if (material == null)
+                return;
+            material.SetFloat("_UseBilinear4", useBilinear4 ? 1f : 0f);
+            // 단일 샘플에서는 LUT 준비 비용이 이득보다 커 기본적으로 직접 읽는다.
+            if (!preferCalibrationLut && GetDecodeSampleSize(material) <= 1)
                 return;
             PrepareCalibrationLut(source, material, 320);
         }
