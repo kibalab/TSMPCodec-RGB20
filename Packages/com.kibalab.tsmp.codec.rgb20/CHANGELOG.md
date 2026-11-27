@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.1.0
+
+- Address payload symbols with integer block indices and share sampling logic with the diagnostic path.
+- Allow single-sample decoding to use the calibration LUT when explicitly requested.
+- Add optional four-tap bilinear sampling for eligible native-resolution 4x4 footprints on Core 1.1.0. It is off by default; Core 1.0.0 and other footprints use ordinary sampling.
+- Bundle the compiled Udon program rather than referencing a project-generated asset. Existing script and source program GUIDs are preserved.
+- Declare the default Luma4 header codec as a package dependency.
+- Core 1.0.0 and 1.1.0 supported; codec ID and sender wire format unchanged.
+
 ## 2.0.0
 
 Stable promotion of all 0.0.3-beta.1 through 0.0.3-beta.5 changes since 1.0.0. No runtime/shader changes from 0.0.3-beta.5.
