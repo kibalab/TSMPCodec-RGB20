@@ -5,6 +5,7 @@ Shader "Hidden/TSMP/Decode RGB20 Bytes"
         [HideInInspector] _TSMPHeaderTex ("Decoded Header", 2D) = "black" {}
         [HideInInspector] _TSMPHeaderPixels ("Header Pixels", Float) = 0
         [HideInInspector] _CalibrationLut ("Calibration LUT", 2D) = "black" {}
+        [HideInInspector] _UseBilinear4 ("Bilinear 4x4 sampling", Float) = 0
         _MainTex ("TSMP Source", 2D) = "black" {}
         _BlockSize ("Block Size", Float) = 8
         _SampleSize ("Sample Size", Float) = 0
@@ -34,6 +35,7 @@ Shader "Hidden/TSMP/Decode RGB20 Bytes"
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile_local _ TSMP_CALIBRATION_LUT
+            #define TSMP_ENABLE_RGB_BOX4
             #include "Packages/com.kibalab.tsmp.core/Runtime/Codecs/Common/Shaders/cgincs/TSMPDecodeCommon.cginc"
 
 #if defined(TSMP_CALIBRATION_LUT)
@@ -88,7 +90,7 @@ Shader "Hidden/TSMP/Decode RGB20 Bytes"
 
             int DecodeRgb20Symbol(int symbolIndex)
             {
-                float blockIndex = PayloadBlockIndex(symbolIndex);
+                uint blockIndex = (uint)_StartBlock + (uint)symbolIndex;
                 float3 rgb = SampleBlockByIndex(blockIndex);
                 int r = ClassifyChannel(rgb.r, 128, 0, 0);
                 int g = ClassifyChannel(rgb.g, 128, 128, 1);
@@ -113,7 +115,7 @@ Shader "Hidden/TSMP/Decode RGB20 Bytes"
 
                 int totalBits = 20;
                 int bitIndex = baseByte * 8;
-                int symbolIndex = FloorDivNonNegative(bitIndex, (float)totalBits);
+                int symbolIndex = (int)((uint)bitIndex / (uint)totalBits);
                 int bitShift = bitIndex - symbolIndex * totalBits;
                 int requiredBits = min(4, (int)_ByteCount - baseByte) * 8;
                 uint packed = (uint)DecodeRgb20Symbol(symbolIndex) >> bitShift;
